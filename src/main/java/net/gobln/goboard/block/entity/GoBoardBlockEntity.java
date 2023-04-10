@@ -91,20 +91,6 @@ public class GoBoardBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, GoBoardBlockEntity pEntity) {
-        if(level.isClientSide()) {
-            return;
-        }
 
-        if(hasRecipe(pEntity)) {
-            pEntity.progress++;
-            setChanged(level, pos, state);
-
-            if(pEntity.progress >= pEntity.maxProgress) {
-                craftItem(pEntity);
-            }
-        } else {
-            pEntity.resetProgress();
-            setChanged(level, pos, state);
-        }
     }
 }
