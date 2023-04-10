@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    "#/#",
+    " # "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:white_dye"
+    },
+    "/": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "goboard:whitegostone",
+    "count": 4
+  }
+}

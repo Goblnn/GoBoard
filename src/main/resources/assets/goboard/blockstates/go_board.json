@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": {"model":  "goboard:block/go_board"}
+  }
+}
