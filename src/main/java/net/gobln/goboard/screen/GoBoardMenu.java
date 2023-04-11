@@ -2,6 +2,7 @@ package net.gobln.goboard.screen;
 
 import net.gobln.goboard.block.ModBlocks;
 import net.gobln.goboard.block.entity.GoBoardBlockEntity;
+import net.gobln.goboard.helpers.ValidGoBoardItem;
 import net.gobln.goboard.item.ModItems;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -19,6 +20,8 @@ public class GoBoardMenu extends AbstractContainerMenu {
     public final GoBoardBlockEntity blockEntity;
     private final Level level;
     private final ContainerData data;
+
+    private ValidGoBoardItem validItems = new ValidGoBoardItem();
 
     private boolean whiteLastPlayed = false;
 
