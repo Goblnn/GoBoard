@@ -26,13 +26,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class GoBoardBlockEntity extends BlockEntity implements MenuProvider {
-    private boolean whiteLastPlayed = false;
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(81){
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
-            System.out.println("wow an item was moved");
         }
     };
 
@@ -58,14 +56,6 @@ public class GoBoardBlockEntity extends BlockEntity implements MenuProvider {
                 return 2;
             }
         };
-    }
-
-    public boolean lastPlayedByWhite(){
-        return whiteLastPlayed;
-    }
-
-    public void setLastPlayed(boolean whiteLastPlayed){
-        this.whiteLastPlayed = whiteLastPlayed;
     }
 
     @Override

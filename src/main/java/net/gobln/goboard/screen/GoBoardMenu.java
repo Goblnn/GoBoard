@@ -2,6 +2,7 @@ package net.gobln.goboard.screen;
 
 import net.gobln.goboard.block.ModBlocks;
 import net.gobln.goboard.block.entity.GoBoardBlockEntity;
+import net.gobln.goboard.item.ModItems;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -18,6 +19,8 @@ public class GoBoardMenu extends AbstractContainerMenu {
     public final GoBoardBlockEntity blockEntity;
     private final Level level;
     private final ContainerData data;
+
+    private boolean whiteLastPlayed = false;
 
     public GoBoardMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
         this(id, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
@@ -65,30 +68,70 @@ public class GoBoardMenu extends AbstractContainerMenu {
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
 
-        // Check if the slot clicked is one of the vanilla container slots
-        if (index < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
-            // This is a vanilla container slot so merge the stack into the tile inventory
-            if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX
-                    + TE_INVENTORY_SLOT_COUNT, false)) {
-                return ItemStack.EMPTY;  // EMPTY_ITEM
-            }
-        } else if (index < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
-            // This is a TE slot so merge the stack into the players inventory
-            if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
+        if(whiteLastPlayed && sourceStack.is(ModItems.BLACK_GO_STONE.get())) {
+            // Check if the slot clicked is one of the vanilla container slots
+            if (index < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
+                // This is a vanilla container slot so merge the stack into the tile inventory
+                if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX
+                        + TE_INVENTORY_SLOT_COUNT, false)) {
+                    System.out.println("1");
+                    return ItemStack.EMPTY;  // EMPTY_ITEM
+                }
+                System.out.println("1.5");
+            } else if (index < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
+                // This is a TE slot so merge the stack into the players inventory
+                if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
+                    System.out.println("2");
+                    return ItemStack.EMPTY;
+                }
+                System.out.println("2.5");
+            } else {
+                System.out.println("Invalid slotIndex:" + index);
                 return ItemStack.EMPTY;
             }
-        } else {
-            System.out.println("Invalid slotIndex:" + index);
-            return ItemStack.EMPTY;
+            // If stack size == 0 (the entire stack was moved) set slot contents to null
+            if (sourceStack.getCount() == 0) {
+                sourceSlot.set(ItemStack.EMPTY);
+                System.out.println("3");
+            } else {
+                sourceSlot.setChanged();
+                System.out.println("4");
+            }
+            sourceSlot.onTake(playerIn, sourceStack);
+            return copyOfSourceStack;
+        }else if(!whiteLastPlayed && sourceStack.is(ModItems.WHITE_GO_STONE.get())) {
+            // Check if the slot clicked is one of the vanilla container slots
+            if (index < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
+                // This is a vanilla container slot so merge the stack into the tile inventory
+                if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX
+                        + TE_INVENTORY_SLOT_COUNT, false)) {
+                    System.out.println("1");
+                    return ItemStack.EMPTY;  // EMPTY_ITEM
+                }
+                System.out.println("1.5");
+            } else if (index < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
+                // This is a TE slot so merge the stack into the players inventory
+                if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
+                    System.out.println("2");
+                    return ItemStack.EMPTY;
+                }
+                System.out.println("2.5");
+            } else {
+                System.out.println("Invalid slotIndex:" + index);
+                return ItemStack.EMPTY;
+            }
+            // If stack size == 0 (the entire stack was moved) set slot contents to null
+            if (sourceStack.getCount() == 0) {
+                sourceSlot.set(ItemStack.EMPTY);
+                System.out.println("3");
+            } else {
+                sourceSlot.setChanged();
+                System.out.println("4");
+            }
+            sourceSlot.onTake(playerIn, sourceStack);
+            return copyOfSourceStack;
         }
-        // If stack size == 0 (the entire stack was moved) set slot contents to null
-        if (sourceStack.getCount() == 0) {
-            sourceSlot.set(ItemStack.EMPTY);
-        } else {
-            sourceSlot.setChanged();
-        }
-        sourceSlot.onTake(playerIn, sourceStack);
-        return copyOfSourceStack;
+        return ItemStack.EMPTY;
     }
 
     @Override
