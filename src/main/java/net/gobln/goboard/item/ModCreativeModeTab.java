@@ -8,7 +8,7 @@ public class ModCreativeModeTab {
     public static final CreativeModeTab CUSTOM_ITEM_TAB = new CreativeModeTab("customitemtab") {
         @Override
         public ItemStack makeIcon() {
-            return new ItemStack(ModItems.LINUS.get());
+            return new ItemStack(ModItems.WHITE_GO_STONE.get());
         }
     };
 }
