@@ -5,6 +5,9 @@ import net.gobln.goboard.block.ModBlocks;
 import net.gobln.goboard.block.entity.ModBlockEntities;
 import net.gobln.goboard.item.ModItems;
 import net.gobln.goboard.networking.ModMessages;
+import net.gobln.goboard.screen.GoBoardScreen;
+import net.gobln.goboard.screen.ModMenuTypes;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -31,6 +34,8 @@ public class GoBoard {
 
         ModBlockEntities.register(modEventBus);
 
+        ModMenuTypes.register(modEventBus);
+
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -49,7 +54,7 @@ public class GoBoard {
     public static class ClientModEvents{
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event){
-
+            MenuScreens.register(ModMenuTypes.GO_BOARD_MENU.get(), GoBoardScreen::new);
         }
     }
 }

@@ -1,6 +1,7 @@
 package net.gobln.goboard.block.entity;
 
 import net.gobln.goboard.GoBoard;
+import net.gobln.goboard.screen.GoBoardMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -66,7 +67,7 @@ public class GoBoardBlockEntity extends BlockEntity implements MenuProvider {
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
-        return null;
+        return new GoBoardMenu(id, inventory, this, this.data);
     }
 
     @Override

@@ -1,42 +1,28 @@
 package net.gobln.goboard.screen;
 
-import net.gobln.goboard.block.entity.GoBoardBlockEntity;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
+import net.gobln.goboard.GoBoard;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.SimpleContainerData;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.network.IContainerFactory;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
-public class ModMenuTypes extends AbstractContainerMenu {
-    public final GoBoardBlockEntity blockEntity;
-    private final Level level;
-    private final ContainerData data;
+public class ModMenuTypes {
+    public static final DeferredRegister<MenuType<?>> MENUS =
+            DeferredRegister.create(ForgeRegistries.MENU_TYPES, GoBoard.MOD_ID);
 
-    public GoBoardMenu(int id, Inventory inv, FriendlyByteBuf extraData){
-        this(id, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
+    public static final RegistryObject<MenuType<GoBoardMenu>> GO_BOARD_MENU =
+            registerMenuType(GoBoardMenu::new, "go_board_menu");
+
+    private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(
+            IContainerFactory<T> factory, String name) {
+        return MENUS.register(name, () -> IForgeMenuType.create(factory));
     }
 
-    public GoBoardMenu(int id, Inventory inv, BlockEntity entity, ContainerData data){
-        super(, id);
-        checkContainerSize(inv, 81);
-        blockEntity = (GoBoardBlockEntity) entity;
-        this.level = inv.player.level;
-        this.data = data;
-    }
-
-    @Override
-    public ItemStack quickMoveStack(Player p_38941_, int p_38942_) {
-        return null;
-    }
-
-    @Override
-    public boolean stillValid(Player p_38874_) {
-        return false;
+    public static void register(IEventBus eventBus){
+        MENUS.register(eventBus);
     }
 }
