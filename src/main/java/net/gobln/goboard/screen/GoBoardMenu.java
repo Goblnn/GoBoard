@@ -2,9 +2,11 @@ package net.gobln.goboard.screen;
 
 import net.gobln.goboard.block.ModBlocks;
 import net.gobln.goboard.block.entity.GoBoardBlockEntity;
-import net.gobln.goboard.helpers.ValidGoBoardItem;
+import net.gobln.goboard.helpers.GoBoardSlot;
 import net.gobln.goboard.item.ModItems;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -21,15 +23,14 @@ public class GoBoardMenu extends AbstractContainerMenu {
     private final Level level;
     private final ContainerData data;
 
-    private ValidGoBoardItem validItems = new ValidGoBoardItem();
-
     private boolean whiteLastPlayed = false;
 
     public GoBoardMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
-        this(id, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
+        this(id, inv, inv.player.level.getBlockEntity(extraData.readBlockPos())
+                , new SimpleContainerData(2));
     }
 
-    public GoBoardMenu(int id, Inventory inv, BlockEntity entity, ContainerData data) {
+    public GoBoardMenu(int id, Inventory inv, BlockEntity entity, ContainerData data/*, Container container*/) {
         super(ModMenuTypes.GO_BOARD_MENU.get(), id);
         checkContainerSize(inv, 3);
         blockEntity = (GoBoardBlockEntity) entity;
@@ -44,7 +45,7 @@ public class GoBoardMenu extends AbstractContainerMenu {
         this.blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
             for(int c = 0; c < 9; c++){
                 for(int r = 0; r < 9; r++){
-                    this.addSlot(new SlotItemHandler(handler, index.get(), 8 + (r*18), 18 + (c*18)));
+                    this.addSlot(new GoBoardSlot(handler, index.get(), 8 + (r*18), 18 + (c*18)));
                     index.getAndIncrement();
                 }
             }
@@ -77,17 +78,13 @@ public class GoBoardMenu extends AbstractContainerMenu {
                 // This is a vanilla container slot so merge the stack into the tile inventory
                 if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX
                         + TE_INVENTORY_SLOT_COUNT, false)) {
-                    System.out.println("1");
                     return ItemStack.EMPTY;  // EMPTY_ITEM
                 }
-                System.out.println("1.5");
             } else if (index < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
                 // This is a TE slot so merge the stack into the players inventory
                 if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
-                    System.out.println("2");
                     return ItemStack.EMPTY;
                 }
-                System.out.println("2.5");
             } else {
                 System.out.println("Invalid slotIndex:" + index);
                 return ItemStack.EMPTY;
@@ -95,10 +92,8 @@ public class GoBoardMenu extends AbstractContainerMenu {
             // If stack size == 0 (the entire stack was moved) set slot contents to null
             if (sourceStack.getCount() == 0) {
                 sourceSlot.set(ItemStack.EMPTY);
-                System.out.println("3");
             } else {
                 sourceSlot.setChanged();
-                System.out.println("4");
             }
             sourceSlot.onTake(playerIn, sourceStack);
             return copyOfSourceStack;
@@ -108,17 +103,14 @@ public class GoBoardMenu extends AbstractContainerMenu {
                 // This is a vanilla container slot so merge the stack into the tile inventory
                 if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX
                         + TE_INVENTORY_SLOT_COUNT, false)) {
-                    System.out.println("1");
                     return ItemStack.EMPTY;  // EMPTY_ITEM
                 }
                 System.out.println("1.5");
             } else if (index < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
                 // This is a TE slot so merge the stack into the players inventory
                 if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
-                    System.out.println("2");
                     return ItemStack.EMPTY;
                 }
-                System.out.println("2.5");
             } else {
                 System.out.println("Invalid slotIndex:" + index);
                 return ItemStack.EMPTY;
